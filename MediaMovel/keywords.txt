@@ -1,0 +1,4 @@
+mediaMovel MEDIAMOVEL
+criarCelulas CRIARCELULAS
+setarElementos SETARELEMENTOS
+calcularMedia CALCULARMEDIA
