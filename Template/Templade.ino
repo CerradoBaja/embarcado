@@ -31,7 +31,7 @@
 #define N2 5 //RPM.
 
 #define TRANSMISSAO 4
-#define PERIMETRO_RODA 0.15
+#define PERIMETRO_RODA 1.0
 #define DISTANCIA_POR_INTERRUPCAO PERIMETRO_RODA/TRANSMISSAO
 
 
@@ -56,6 +56,7 @@ volatile int contadorVelocidade = 0;
 int aux = 0;
 int tempoAnt = 0;
 int lastMillis = 0;
+int contador_filtrado = 50;
 
 // Definição das variáveis globais - FIM
 
@@ -135,7 +136,14 @@ void calculoVelocidade(){
 	int distanciaPercorrida = contadorVelocidade * DISTANCIA_POR_INTERRUPCAO;
 
 	//Processo para calculo da velocidade:
-	velocidade.setarElementos((distanciaPercorrida/(millis() - lastMillis)/1000))*3.6);
+	if(millis() > lastMillis){
+		velocidade.setarElementos((distanciaPercorrida/((millis() - lastMillis)/1000.0))*3.6);
+		Serial.print(contadorVelocidade);
+		Serial.print(" | ");
+		Serial.print((millis() - lastMillis)/1000.0);
+		Serial.print(" | ");
+		Serial.println(velocidade.calcularMedia());
+	}
 	distancia.write(distancia.read() + distanciaPercorrida);
 	contadorVelocidade = 0;
 	lastMillis = millis();
