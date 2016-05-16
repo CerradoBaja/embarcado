@@ -31,7 +31,7 @@
 #define N2 5 //RPM.
 
 #define TRANSMISSAO 4
-#define PERIMETRO_RODA 1.0
+#define PERIMETRO_RODA 1.65
 #define DISTANCIA_POR_INTERRUPCAO PERIMETRO_RODA/TRANSMISSAO
 
 
@@ -55,7 +55,7 @@ volatile int contadorRPM = 0;
 volatile int contadorVelocidade = 0;
 int aux = 0;
 int tempoAnt = 0;
-int lastMillis = 0;
+unsigned long lastMillis = 0;
 int contador_filtrado = 50;
 
 // Definição das variáveis globais - FIM
@@ -123,8 +123,8 @@ void ligarInterrupcoes(){
 
 //Funcao responsavel por desativar as interrupcoes - INICIO:
 void desligarInterrupcoes(){
-	detachInterrupt(PIN_INTERRUPCAO_VELOCIDADE);
-	detachInterrupt(PIN_INTERRUPCAO_RPM);
+	/*detachInterrupt(PIN_INTERRUPCAO_VELOCIDADE);
+	detachInterrupt(PIN_INTERRUPCAO_RPM);*/
 }
 //Funcao responsavel por desativar as interrupcoes - FIM.
 
@@ -133,18 +133,20 @@ void calculoVelocidade(){
 	desligarInterrupcoes(); //Desativanto interrupcoes para que o calculo da velocidade nao seja interrompido.
 
 	//Declaracao das variaveis usadas localmente:
-	int distanciaPercorrida = contadorVelocidade * DISTANCIA_POR_INTERRUPCAO;
+	float distanciaPercorrida = contadorVelocidade * DISTANCIA_POR_INTERRUPCAO;
 
 	//Processo para calculo da velocidade:
-	if(millis() > lastMillis){
-		velocidade.setarElementos((distanciaPercorrida/((millis() - lastMillis)/1000.0))*3.6);
-		Serial.print(contadorVelocidade);
-		Serial.print(" | ");
-		Serial.print((millis() - lastMillis)/1000.0);
-		Serial.print(" | ");
-		Serial.println(velocidade.calcularMedia());
-	}
+	velocidade.setarElementos((distanciaPercorrida/((millis() - lastMillis)/1000.0))*3.6);
+	Serial.print(contadorVelocidade);
+	Serial.print(" | ");
+	Serial.print((millis() - lastMillis)/1000.0);
+	Serial.print(" | ");
+	Serial.print(velocidade.calcularMedia());
+	Serial.print(" | ");
+	Serial.print((distanciaPercorrida/((millis() - lastMillis)/1000.0))*3.6);	
+	Serial.print(" | ");
 	distancia.write(distancia.read() + distanciaPercorrida);
+	Serial.println(distancia.read());
 	contadorVelocidade = 0;
 	lastMillis = millis();
 
@@ -201,14 +203,13 @@ void calculoRPM(){
 //Funcao de interrupcao da velocidade - INICIO:
 void interrupcao_velocidade()
 {
-	Serial.println("Entrando na interrupcao");
-  contadorVelocidade++;
+	contadorVelocidade++;
 }
 //Funcao de interrupcao da velocidade - FIM.
 
 //Funcao da interrupcao do RPM - INICIO:
 void interrupcao_rpm_motor()
 { 
-  contadorRPM++;
+	contadorRPM++;
 }
 //Funcao da interrupcao do RPM - FIM.
