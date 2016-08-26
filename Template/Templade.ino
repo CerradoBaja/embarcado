@@ -11,9 +11,7 @@
 // Definição das constantes - INICIO
 #define PIN_TENSAO A3
 #define PIN_TEMP_CVT A1
-#define PIN_TEMP_MOTOR A0
 #define PIN_VELOCIDADE 3
-#define PIN_INTERRUPCAO_RPM 0
 #define PIN_INTERRUPCAO_VELOCIDADE 1
 
 #define TIME_THREAD_DISPLAY 500
@@ -25,7 +23,6 @@
 #define ACTIVE_THREAD_CALCULO_TEMP_TENSAO true
 
 //Termos que definem quantos elementos serao utilizados para calculo da Media Movel:
-#define N1 5 //RPM.
 #define N2 5 //Velocidade.
 #define N3 5 //Temperatura CVT.
 #define N4 5 //Temperatura Motor.
