@@ -11,6 +11,7 @@
 // Definição das constantes - INICIO
 #define PIN_TENSAO A3
 #define PIN_TEMP_CVT A1
+#define PIN_TEMP_MOTOR A2
 #define PIN_VELOCIDADE 3
 #define PIN_INTERRUPCAO_VELOCIDADE 1
 
@@ -18,9 +19,9 @@
 #define TIME_THREAD_CALCULO_VELOCIDADE 500
 #define TIME_THREAD_CALCULO_TEMP_TENSAO 500
 
-#define ACTIVE_THREAD_DISPLAY false
+#define ACTIVE_THREAD_DISPLAY true
 #define ACTIVE_THREAD_CALCULO_VELOCIDADE false
-#define ACTIVE_THREAD_CALCULO_TEMP_TENSAO true
+#define ACTIVE_THREAD_CALCULO_TEMP_TENSAO false
 
 //Termos que definem quantos elementos serao utilizados para calculo da Media Movel:
 #define N2 5 //Velocidade.
@@ -62,6 +63,7 @@ void setup(){
 	//Configuracao dos pinos:
 	pinMode(PIN_TENSAO, INPUT);
 	pinMode(PIN_VELOCIDADE, INPUT_PULLUP);
+	drawStart();
 
 	// Configuração das Threads
     ThreadCalculoVelocidade.setFunction(calculoVelocidade);
@@ -98,7 +100,7 @@ void loop(){
 
 // Rotina para imprimir informacoes no display - INICIO
 void plotar(){
-	//draw(23, 12, 300, 40, 50);
+	draw(23, 12, 300, 40, 50, 18, 06);
 	/*Serial.print("Velocidade: ");
 	Serial.print(velocidade.calcularMedia());
 	Serial.print(" | ");
