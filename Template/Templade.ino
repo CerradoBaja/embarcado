@@ -3,8 +3,11 @@
 #include <MediaMovel.h>
 #include <VSL_Display.h>
 #include <vslThread.h>
-#include "x/EEPROM.h"
-#include "vslEeprom.h"
+#include <EEPROM.h>
+#include <vslEeprom.h>
+#include <RTClib.h>
+#include <Wire.h>
+
 // Inclusão de bibliotecas - FIM
 
 
@@ -14,6 +17,13 @@
 #define PIN_TEMP_MOTOR A2
 #define PIN_VELOCIDADE 3
 #define PIN_INTERRUPCAO_VELOCIDADE 1
+
+#define RTC_ANO_INICIAL 10
+#define RTC_MES_INICIAL 10
+#define RTC_DIA_INICIAL 10
+#define RTC_HORA_INICIAL 10
+#define RTC_MINUTO_INICIAL 10
+#define RTC_SEGUNDO_INICAL 10
 
 #define TIME_THREAD_DISPLAY 500
 #define TIME_THREAD_CALCULO_VELOCIDADE 500
@@ -49,10 +59,9 @@ MediaMovel velocidade(N2);
 MediaMovel tensao_bateria(N5);
 MediaMovel temperatura_CVT(N3);
 MediaMovel temperatura_motor(N4);
+RTC_DS1307 rtc;
 
 volatile int contadorVelocidade = 0;
-int aux = 0;
-int tempoAnt = 0;
 unsigned long lastMillisVelocidade = 0;
 
 // Definição das variáveis globais - FIM
@@ -83,9 +92,16 @@ void setup(){
     cpuSensores.addThread(&ThreadCalculoTempTensao);
     cpuSensores.addThread(&ThreadCalculoVelocidade);
 
-    
+    if (! rtc.isrunning()) 
+  	{
+	    Serial.println("RTC is NOT running!"); // Ve se o rtc inicializou corretamente
+	    rtc.adjust(DateTime(RTC_ANO_INICIAL, RTC_MES_INICIAL, RTC_DIA_INICIAL, RTC_HORA_INICIAL, RTC_MINUTO_INICIAL, RTC_SEGUNDO_INICAL)); // configura a data e hora inicial
+	    //Para configurar a hora seguir o exemplo
+	    // January 21, 2014 at 3am you would call:
+	    //rtc.adjust(DateTime(2016, 4, 01, 15, 36, 0));
+  	}
 
-	ligarInterrupcoes();
+    ligarInterrupcoes();
 }
 
 void loop(){
@@ -100,18 +116,10 @@ void loop(){
 
 // Rotina para imprimir informacoes no display - INICIO
 void plotar(){
-	draw(23, 12, 300, 40, 50, 18, 06);
-	/*Serial.print("Velocidade: ");
-	Serial.print(velocidade.calcularMedia());
-	Serial.print(" | ");
-	Serial.print("Distancia: ");
-	Serial.print(distancia.read());
-	Serial.print(" | ");
-	Serial.print("RPM: ");
-	Serial.print(RPM.calcularMedia());
-	Serial.print(" | ");
-	Serial.print("Temperatura do motor: ");
-	Serial.println(temperatura_motor.calcularMedia());*/
+	//Declaracao das variaveis utilizadas localmente:
+	DateTime now = rtc.now();
+
+	draw(23, 12, 300, 40, 50, now.hour(), now.minute());
 }
 // Rotina para imprimir informacoes no display - FIM
 
