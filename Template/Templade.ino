@@ -18,11 +18,11 @@
 #define PIN_VELOCIDADE 3
 #define PIN_INTERRUPCAO_VELOCIDADE 1
 
-#define RTC_ANO_INICIAL 10
-#define RTC_MES_INICIAL 10
-#define RTC_DIA_INICIAL 10
-#define RTC_HORA_INICIAL 10
-#define RTC_MINUTO_INICIAL 10
+#define RTC_ANO_INICIAL 2016
+#define RTC_MES_INICIAL 9
+#define RTC_DIA_INICIAL 8
+#define RTC_HORA_INICIAL 17
+#define RTC_MINUTO_INICIAL 9
 #define RTC_SEGUNDO_INICAL 10
 
 #define TIME_THREAD_DISPLAY 500
@@ -68,11 +68,14 @@ unsigned long lastMillisVelocidade = 0;
 
 
 void setup(){
-	Serial.begin(9600);
+	Serial.begin(57600);
+	Wire.begin();
+	rtc.begin();
 	//Configuracao dos pinos:
 	pinMode(PIN_TENSAO, INPUT);
 	pinMode(PIN_VELOCIDADE, INPUT_PULLUP);
-	drawStart();
+
+	//drawStart();
 
 	// Configuração das Threads
     ThreadCalculoVelocidade.setFunction(calculoVelocidade);
@@ -92,14 +95,14 @@ void setup(){
     cpuSensores.addThread(&ThreadCalculoTempTensao);
     cpuSensores.addThread(&ThreadCalculoVelocidade);
 
-    if (! rtc.isrunning()) 
+    /*if (rtc.isrunning()) 
   	{
 	    Serial.println("RTC is NOT running!"); // Ve se o rtc inicializou corretamente
 	    rtc.adjust(DateTime(RTC_ANO_INICIAL, RTC_MES_INICIAL, RTC_DIA_INICIAL, RTC_HORA_INICIAL, RTC_MINUTO_INICIAL, RTC_SEGUNDO_INICAL)); // configura a data e hora inicial
 	    //Para configurar a hora seguir o exemplo
 	    // January 21, 2014 at 3am you would call:
 	    //rtc.adjust(DateTime(2016, 4, 01, 15, 36, 0));
-  	}
+  	}*/
 
     ligarInterrupcoes();
 }
@@ -120,6 +123,29 @@ void plotar(){
 	DateTime now = rtc.now();
 
 	draw(23, 12, 300, 40, 50, now.hour(), now.minute());
+
+	/*if(now.day()<10)
+    Serial.print("0");
+    Serial.print(now.day());
+    Serial.print('/'); 
+    if(now.month()<10)
+    Serial.print("0");
+    Serial.print(now.month());
+    Serial.print('/');
+    Serial.print(now.year());
+    Serial.print(' ');  
+    if(now.hour()<10)
+    Serial.print("0");
+    Serial.print(now.hour());
+    Serial.print(':');
+    if(now.minute()<10)
+    Serial.print("0");
+    Serial.print(now.minute());
+    Serial.print(':');
+    if(now.second()<10)
+    Serial.print("0");
+    Serial.print(now.second());
+    Serial.println();*/
 }
 // Rotina para imprimir informacoes no display - FIM
 
